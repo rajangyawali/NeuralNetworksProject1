@@ -1,0 +1,8 @@
+*.pth
+*.tar.gz
+*.gz
+*ubyte
+
+
+data/
+__pycache__/
