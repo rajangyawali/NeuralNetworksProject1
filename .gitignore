@@ -2,7 +2,7 @@
 *.tar.gz
 *.gz
 *ubyte
-
+.gitignore
 
 data/
 __pycache__/
