@@ -1,5 +1,4 @@
 import torch
-from a import load_mnist_custom_dataset
 from evaluation import accuracy_precision_recall_f1, plot_confusion_matrix
 from dataset import load_mnist, load_mnist_custom_dataset
 import config
@@ -16,11 +15,7 @@ class MLP(nn.Module):
         self.multi_layer_percepton = nn.Sequential(
             nn.Linear(input_neurons, 512),
             nn.ReLU(inplace=True),
-            nn.Linear(512, 392),
-            nn.ReLU(inplace=True),
-            nn.Linear(392, 196),
-            nn.ReLU(inplace=True),
-            nn.Linear(196, 2)
+            nn.Linear(512, output_neurons)
         )
         
         
@@ -29,28 +24,25 @@ class MLP(nn.Module):
         x = self.multi_layer_percepton(x)
         return x
 
-
+classes = [i for i in range(0,10)]
 
 # Create instance of the MLP, loss function, and optimizer
-model = MLP(input_neurons=28*28, output_neurons=10)
+model = MLP(input_neurons=28*28, output_neurons=len(classes))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-classes = [3, 8]
-
-train_dataset, test_dataset, train_loader, test_loader = load_mnist_custom_dataset(labels=classes)
-
-# train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_MNIST_3_vs_8')
+train_dataset, test_dataset, train_loader, test_loader = load_mnist()
+train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP-small')
 
 # Load your trained model
-model = torch.load('output/MLP_MNIST_3_vs_8_model_20_epochs.pth')
+# model = torch.load('output/MLP-small_model_20_epochs.pth')
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("[INFO] Total Number of Parameters : {}".format(total_params))
 
 # Testing Procedure
 confusion_matrix = test_model(model, test_loader, num_classes=len(classes))
 
-# Plot the confusion matrix
+# # Plot the confusion matrix
 plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="MLP_MNIST_3_vs_8")
 accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name='MLP_MNIST_3_vs_8')
 

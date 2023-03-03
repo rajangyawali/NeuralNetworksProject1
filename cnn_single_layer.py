@@ -1,6 +1,6 @@
 import torch
 from evaluation import accuracy_precision_recall_f1, plot_confusion_matrix
-from dataset import load_mnist, load_mnist_custom_dataset, load_fashion_mnist
+from dataset import load_mnist, load_mnist_custom_dataset
 import config
 import torch.nn as nn
 import torch.optim as optim
@@ -18,19 +18,10 @@ class CNN(nn.Module):
             nn.Conv2d(in_channels=in_channels, out_channels=32, kernel_size=3, 
                     stride=1, padding=1 ),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, 
-                    stride=1, padding=1 ),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, 
-                    stride=1, padding=1 ),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),
+            nn.MaxPool2d(2)
         )
         self.out = nn.Sequential(
-            nn.Linear(64*3*3, 20),
-            nn.Linear(20, output_classes)
+            nn.Linear(32*14*14, output_classes)
         )
     def forward(self, x):
         x = self.conv(x)
@@ -39,25 +30,18 @@ class CNN(nn.Module):
         return x
 
 classes = [i for i in range(0,10)]
-# classes = [1, 8]
 
 # Create instance of the CNN, loss function, and optimizer
 model = CNN(in_channels=1, output_classes=len(classes)).to(config.DEVICE)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adagrad(model.parameters(), lr=0.01)
-
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
 train_dataset, test_dataset, train_loader, test_loader = load_mnist()
-# train_model(model, train_dataset, train_loader, criterion, optimizer, 'CNN_Adagrad_0.01')
-
-# train_dataset, test_dataset, train_loader, test_loader = load_fashion_mnist()
-# train_model(model, train_dataset, train_loader, criterion, optimizer, 'CNN_Fashion_MNIST')
-
-# train_dataset, test_dataset, train_loader, test_loader = load_mnist_custom_dataset(labels=classes)
-# train_model(model, train_dataset, train_loader, criterion, optimizer, 'CNN_MNIST_1_vs_8')
+# train_model(model, train_dataset, train_loader, criterion, optimizer, 'CNN_Single_Layer')
 
 # Load your trained model
-model = torch.load('output/CNN_Adagrad_0.01_model_20_epochs.pth')
+model = torch.load('output/CNN_Single_Layer_model_20_epochs.pth')
+
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("[INFO] Total Number of Parameters : {}".format(total_params))
 
@@ -65,5 +49,5 @@ print("[INFO] Total Number of Parameters : {}".format(total_params))
 confusion_matrix = test_model(model, test_loader, num_classes=len(classes))
 
 # Plot the confusion matrix
-plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="CNN_Adagrad_0.01")
-accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name="CNN_Adagrad_0.01")
+plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="CNN_Single_Layer")
+accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name="CNN_Single_Layer")

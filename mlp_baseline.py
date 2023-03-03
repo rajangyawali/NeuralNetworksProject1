@@ -28,17 +28,23 @@ class MLP(nn.Module):
         x = self.multi_layer_percepton(x)
         return x
 
-
+classes = [i for i in range(0,10)]
+# classes = [1, 8]
 
 # Create instance of the MLP, loss function, and optimizer
-model = MLP(input_neurons=28*28, output_neurons=10)
+model = MLP(input_neurons=28*28, output_neurons=len(classes))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
 train_dataset, test_dataset, train_loader, test_loader = load_mnist()
-
-classes = [i for i in range(0,10)]
 train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP')
+
+# train_dataset, test_dataset, train_loader, test_loader = load_fashion_mnist()
+# train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_Fashion_MNIST')
+
+# train_dataset, test_dataset, train_loader, test_loader = load_mnist_custom_dataset(labels=classes)
+# train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_MNIST_1_vs_8')
+
 
 # Load your trained model
 model = torch.load('output/MLP_model_40_epochs.pth')

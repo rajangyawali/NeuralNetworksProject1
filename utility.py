@@ -13,7 +13,7 @@ def train_model(model, dataset, dataloader, criterion, optimizer, name='Model'):
     print("[INFO] Training the network...")
     start_time = time.time()
 
-    # Train the CNN
+    # Train the Model
     for epoch in tqdm(range(config.MAX_EPOCHS)):
         training_loss = 0.0
         training_accuracy = 0.0
