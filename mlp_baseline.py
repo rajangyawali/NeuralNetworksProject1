@@ -34,10 +34,10 @@ classes = [i for i in range(0,10)]
 # Create instance of the MLP, loss function, and optimizer
 model = MLP(input_neurons=28*28, output_neurons=len(classes))
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0)
 
 train_dataset, test_dataset, train_loader, test_loader = load_mnist()
-train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP')
+train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_SGD_LR_0.01')
 
 # train_dataset, test_dataset, train_loader, test_loader = load_fashion_mnist()
 # train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_Fashion_MNIST')
@@ -47,7 +47,7 @@ train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP')
 
 
 # Load your trained model
-model = torch.load('output/MLP_model_40_epochs.pth')
+model = torch.load('output/MLP_SGD_LR_0.01_model_20_epochs.pth')
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("[INFO] Total Number of Parameters : {}".format(total_params))
 
@@ -55,6 +55,6 @@ print("[INFO] Total Number of Parameters : {}".format(total_params))
 confusion_matrix = test_model(model, test_loader, num_classes=len(classes))
 
 # Plot the confusion matrix
-plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="MLP")
-accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name='MLP')
+plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="MLP_SGD_LR_0.01")
+accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name='MLP_SGD_LR_0.01')
 
