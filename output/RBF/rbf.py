@@ -15,7 +15,7 @@ train_dataset, test_dataset, train_loader, test_loader = load_mnist()
 X_train = train_dataset.data.reshape(-1, 784).double().to(config.DEVICE) / 255.0
 
 # Cluster the data using KMeans with k=10
-kmeans = KMeans(n_clusters=50)
+kmeans = KMeans(n_clusters=10)
 kmeans.fit(X_train.cpu().numpy())
 
 # Get the coordinates of the cluster centers
@@ -24,7 +24,7 @@ clusters = kmeans.cluster_centers_.astype(float)
 
 
 # make network
-class RBFNet(nn.Module):
+class RBFNet(nn.Module): 
     def __init__(self, clusters, num_classes):
         super().__init__()
         self.N = clusters.shape[0]
@@ -108,7 +108,7 @@ MAX_EPOCHS = 20
 classes = [i for i in range(0,10)]
 num_classes=len(classes)
 # Load your trained model
-model = torch.load('output/RBF_model_Adam_LR0.1_30_clusters20_epochs.pth')
+model = torch.load('output/RBF_model_Adam_LR0.1_20_epochs.pth')
 
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("[INFO] Total Number of Parameters : {}".format(total_params))
@@ -126,6 +126,6 @@ with torch.no_grad():
             confusion_matrix[t, p] += 1
 
 # Plot the confusion matrix
-plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="RBF_Adam_LR_0.1_50_clusters")
-accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=num_classes, model_name="RBF_Adam_LR_0.1_50_clusters")
+plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="RBF_Adam_LR_0.1_10_clusters")
+accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=num_classes, model_name="RBF_Adam_LR_0.1_10_clusters")
 
