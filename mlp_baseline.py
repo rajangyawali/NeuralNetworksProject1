@@ -1,6 +1,6 @@
 import torch
 from evaluation import accuracy_precision_recall_f1, plot_confusion_matrix
-from dataset import load_mnist
+from dataset import load_fashion_mnist, load_mnist
 import config
 import numpy as np
 import torch.nn as nn
@@ -28,18 +28,18 @@ class MLP(nn.Module):
         x = self.multi_layer_percepton(x)
         return x
 
-classes = [i for i in range(0,10)]
+classes = ['T-shirt/Top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle Boot']
 # classes = [1, 8]
 
 # Create instance of the MLP, loss function, and optimizer
 model = MLP(input_neurons=28*28, output_neurons=len(classes))
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0)
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-train_dataset, test_dataset, train_loader, test_loader = load_mnist()
-train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_SGD_LR_0.01')
+# train_dataset, test_dataset, train_loader, test_loader = load_mnist()
+# train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_SGD_LR_0.01')
 
-# train_dataset, test_dataset, train_loader, test_loader = load_fashion_mnist()
+train_dataset, test_dataset, train_loader, test_loader = load_fashion_mnist()
 # train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_Fashion_MNIST')
 
 # train_dataset, test_dataset, train_loader, test_loader = load_mnist_custom_dataset(labels=classes)
@@ -47,7 +47,7 @@ train_model(model, train_dataset, train_loader, criterion, optimizer, 'MLP_SGD_L
 
 
 # Load your trained model
-model = torch.load('output/MLP_SGD_LR_0.01_model_20_epochs.pth')
+model = torch.load('output/MLP_Fashion_MNIST_model_20_epochs.pth')
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("[INFO] Total Number of Parameters : {}".format(total_params))
 
@@ -55,6 +55,6 @@ print("[INFO] Total Number of Parameters : {}".format(total_params))
 confusion_matrix = test_model(model, test_loader, num_classes=len(classes))
 
 # Plot the confusion matrix
-plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="MLP_SGD_LR_0.01")
-accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name='MLP_SGD_LR_0.01')
+plot_confusion_matrix(confusion_matrix.numpy(), classes=classes, model_name="MLP_Fashion_MNIST")
+accuracy_precision_recall_f1(confusion_matrix.numpy(), num_classes=len(classes), model_name='MLP_Fashion_MNIST')
 
